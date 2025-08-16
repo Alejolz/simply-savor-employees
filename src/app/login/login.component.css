@@ -1,0 +1,310 @@
+
+.login-container {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0c8b5e 0%, #0b5760 70%, #064663 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 450px;
+  border: 0;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  z-index: 2;
+  padding: 1.5rem;
+}
+
+.logo {
+  max-height: 120px;
+  width: auto;
+}
+
+.btn-primary {
+  background-color: #11a92f;
+  border-color: #11a92f;
+  transition: all 0.3s ease;
+  
+  &:hover, &:focus {
+    background-color: #0e8a26;
+    border-color: #0e8a26;
+  }
+  
+  &:active {
+    transform: scale(0.98);
+  }
+  
+  &:disabled {
+    background-color: #cccccc;
+    border-color: #bbbbbb;
+  }
+}
+
+a {
+  cursor: pointer;
+  color: #11a92f;
+  
+  &:hover {
+    color: #0e8a26;
+  }
+}
+
+.bubbles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.bubble {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+  animation-duration: 25s;
+  animation-fill-mode: both;
+  animation-timing-function: cubic-bezier(0.445, 0.05, 0.55, 0.95);
+  animation-iteration-count: infinite;
+}
+
+.bubble:nth-child(1) { 
+  width: 180px; height: 180px; top: 10%; left: 10%; 
+  animation-name: floatAround1; 
+}
+
+.bubble:nth-child(2) { 
+  width: 120px; height: 120px; top: 35%; right: 15%; 
+  animation-name: floatAround2; 
+  animation-delay: 2s;
+}
+
+.bubble:nth-child(3) { 
+  width: 250px; height: 250px; bottom: 15%; left: 5%; 
+  animation-name: floatAround3; 
+  animation-delay: 1s;
+}
+
+.bubble:nth-child(4) { 
+  width: 100px; height: 100px; top: 20%; left: 45%;
+  animation-name: floatAround4;
+  animation-delay: 3s;
+}
+
+.bubble:nth-child(5) { 
+  width: 150px; height: 150px; bottom: 20%; right: 15%; 
+  animation-name: floatAround5; 
+  animation-delay: 4s;
+}
+
+.bubble:nth-child(6) { 
+  width: 90px; height: 90px; bottom: 40%; left: 30%; 
+  animation-name: floatAround6;
+  animation-delay: 2.5s;
+}
+
+@keyframes floatAround1 {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(100px, 150px) rotate(5deg); }
+  50% { transform: translate(200px, 50px) rotate(10deg); }
+  75% { transform: translate(100px, -100px) rotate(5deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+
+@keyframes floatAround2 {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  33% { transform: translate(-150px, 100px) rotate(-10deg); }
+  66% { transform: translate(-70px, -150px) rotate(-5deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+
+@keyframes floatAround3 {
+  0% { transform: translate(0, 0) scale(1); }
+  20% { transform: translate(150px, -100px) scale(0.9); }
+  40% { transform: translate(250px, 0) scale(1.1); }
+  60% { transform: translate(150px, 100px) scale(0.95); }
+  80% { transform: translate(0, 50px) scale(1); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+@keyframes floatAround4 {
+  0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+  25% { transform: translate(-150px, 100px) scale(1.05) rotate(180deg); }
+  50% { transform: translate(0, 200px) scale(0.95) rotate(360deg); }
+  75% { transform: translate(150px, 100px) scale(1.05) rotate(540deg); }
+  100% { transform: translate(0, 0) scale(1) rotate(720deg); }
+}
+
+@keyframes floatAround5 {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  30% { transform: translate(-120px, -80px) rotate(10deg); }
+  60% { transform: translate(0, -200px) rotate(-10deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+
+@keyframes floatAround6 {
+  0% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(150px, -80px) scale(1.2); }
+  66% { transform: translate(80px, 100px) scale(0.8); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+.form-floating label {
+  color: #495057;
+}
+
+.text-muted {
+  color: #6c757d;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.login-card {
+  animation: fadeIn 0.8s ease-out forwards;
+}
+
+@media (max-width: 576px) {
+  .login-card {
+    margin: 0 15px;
+    padding: 1rem;
+  }
+  
+  .card-body {
+    padding: 1rem;
+  }
+  
+  h2.card-title {
+    font-size: 1.5rem;
+  }
+  
+
+  .bubble {
+    opacity: 0.5;
+    transform: scale(0.7);
+  }
+  
+  .bubble:nth-child(3) {
+    width: 180px;
+    height: 180px;
+  }
+}
+
+
+
+@media (min-width: 1200px) {
+  .login-card {
+    max-width: 500px;
+    padding: 2rem;
+  }
+  
+ 
+  .form-control:hover {
+    border-color: #11a92f;
+  }
+  
+  .form-control:focus {
+    border-color: #11a92f;
+    box-shadow: 0 0 0 0.25rem rgba(17, 169, 47, 0.25);
+  }
+}
+
+
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label {
+  color: #0c8b5e;
+  opacity: 0.8;
+}
+
+.form-floating > .form-control:focus {
+  border-color: #0c8b5e;
+  box-shadow: 0 0 0 0.25rem rgba(12, 139, 94, 0.25);
+}
+
+.bubble {
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(255, 255, 255, 0.3) 0%,
+    rgba(255, 255, 255, 0.1) 70%
+  );
+}
+
+@media (prefers-color-scheme: dark) {
+  .login-card {
+    background-color: #212529;
+    color: #f8f9fa;
+  }
+  
+  .form-control,
+  .form-control:focus {
+    background-color: #343a40;
+    border-color: #495057;
+    color: #f8f9fa;
+  }
+  
+  .form-floating label {
+    color: #adb5bd;
+  }
+  
+  .text-muted {
+    color: #ced4da !important;
+  }
+  
+  a {
+    color: #4ade80;
+  }
+  
+  a:hover {
+    color: #22c55e;
+  }
+  
+  .btn-primary {
+    background-color: #22c55e;
+    border-color: #16a34a;
+  }
+  
+  .btn-primary:hover {
+    background-color: #16a34a;
+    border-color: #15803d;
+  }
+}
+
+
+.form-control {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.form-control:focus {
+  transform: translateY(-2px);
+}
+
+
+.is-invalid.form-control {
+  background-image: none;
+}
+
+.invalid-feedback {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #dc3545;
+  margin-top: 0.25rem;
+  animation: fadeIn 0.3s ease-out;
+}
+
+
+* {
+  box-sizing: border-box;
+}
+
+body, html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
