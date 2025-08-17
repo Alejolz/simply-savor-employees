@@ -138,13 +138,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   handlePqrResolved(response: any): void {
-    // console.log('PQR resuelto:', response);
+    console.log('PQR resuelto:', response);
     
-    // // Recargar los datos de PQRs para actualizar los contadores
-    // this.loadPqrs();
+    // Recargar los datos de PQRs para actualizar los contadores
+    this.loadPqrs();
     
-    // // Mostrar alerta de éxito
-    // alert('¡Solicitud resuelta exitosamente!');
+    // Mostrar alerta de éxito
+    alert('¡Solicitud resuelta exitosamente!');
   }
 
   handleModalClosed(): void {

@@ -1,9 +1,9 @@
 <div class="dashboard">
-  <!-- Navbar principal -->
+  <!-- Navbar principal con efecto de glassmorphism -->
   <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container-fluid">
       <a class="navbar-brand" href="#">
-        <i class="bi bi-building"></i> Portal de Empleados
+        <i class="bi bi-building-fill"></i> Portal de Empleados
       </a>
 
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -16,7 +16,7 @@
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button"
               data-bs-toggle="dropdown" aria-expanded="false">
-              <div class="avatar-circle me-2">{{ userInitial }}</div>
+              <div class="avatar-circle pulse me-2">{{ userInitial }}</div>
               <span>{{ employee?.userName || 'Usuario' }}</span>
             </a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
@@ -46,8 +46,10 @@
           <div class="card-body">
             <div class="row">
               <div class="col-md-6">
-                <h2 class="welcome-title">¡Bienvenido de nuevo, {{ getUserFirstName() }}!</h2>
-                <p class="text-muted">Gestiona tus solicitudes e información</p>
+                <div class="welcome-text">
+                  <h2 class="welcome-title">Bienvenido de nuevo, <span>{{ getUserFirstName() }}</span></h2>
+                  <p class="text-muted">Gestiona tus solicitudes e información.</p>
+                </div>
               </div>
               <div class="col-md-6">
                 <div class="row stats-container">
@@ -87,46 +89,31 @@
       <div class="col-lg-4 mb-4">
         <div class="card h-100 profile-card">
           <div class="card-body">
-            <div class="d-flex align-items-center mb-4">
-
+            <div class="d-flex align-items-center mb-3 profile-title">
               <div>
-                <h3 class="card-title">Mi Perfil</h3>
-                <span class="badge bg-success">Activo</span>
+                <h3 class="card-title mb-1">Mi Perfil</h3>
+                <span class="badge status-badge">
+                  <span class="status-dot"></span> Activo
+                </span>
               </div>
             </div>
             <div class="profile-info">
               <div class="info-item">
-                <i class="bi bi-person"></i>
+                <i class="bi bi-person-fill"></i>
                 <div>
                   <p class="info-label">Nombre</p>
                   <p class="info-value">{{ employee?.userName || 'No disponible' }}</p>
                 </div>
               </div>
               <div class="info-item">
-                <i class="bi bi-envelope"></i>
+                <i class="bi bi-envelope-fill"></i>
                 <div>
                   <p class="info-label">Email</p>
                   <p class="info-value">{{ employee?.employeeEmail || 'No disponible' }}</p>
                 </div>
               </div>
-              <!-- <div class="info-item">
-                <i class="bi bi-telephone"></i>
-                <div>
-                  <p class="info-label">Teléfono</p>
-                  <p class="info-value">{{ employee?.employeePhone || 'No disponible' }}</p>
-                </div>
-              </div>
               <div class="info-item">
-                <i class="bi bi-card-text"></i>
-                <div>
-                  <p class="info-label">Identificación</p>
-                  <p class="info-value">{{ employee?.employeeIdentification || 'No disponible' }}
-                    <span *ngIf="employee?.identificationType">({{ employee?.identificationType }})</span>
-                  </p>
-                </div>
-              </div> -->
-              <div class="info-item">
-                <i class="bi bi-briefcase"></i>
+                <i class="bi bi-briefcase-fill"></i>
                 <div>
                   <p class="info-label">Rol</p>
                   <p class="info-value">{{ employee?.employeeRole || 'No disponible' }}</p>
@@ -146,7 +133,10 @@
                 <div class="feature-icon bg-gradient-primary text-white rounded-circle p-3 me-3">
                   <i class="bi bi-kanban fs-4"></i>
                 </div>
-                <h3 class="card-title mb-0">Sistema PQRS</h3>
+                <div>
+                  <h3 class="card-title mb-0">Sistema PQRS</h3>
+                  <p class="card-subtitle text-muted">Gestión de solicitudes</p>
+                </div>
               </div>
               <div class="dropdown">
                 <button class="btn btn-sm btn-light" type="button" id="pqrsDropdown" data-bs-toggle="dropdown"
@@ -168,7 +158,7 @@
               <div class="progress-stat">
                 <div class="d-flex justify-content-between">
                   <span>Solicitudes Completadas</span>
-                  <span>{{ resolvedPercentage }}%</span>
+                  <span class="progress-percentage">{{ resolvedPercentage }}%</span>
                 </div>
                 <div class="progress">
                   <div class="progress-bar bg-success" role="progressbar" [style.width.%]="resolvedPercentage"
@@ -179,7 +169,7 @@
             </div>
 
             <div class="d-grid gap-2 d-md-flex justify-content-md-start mt-4">
-              <button type="button" class="btn btn-outline-secondary" (click)="openPendingPqrsModal()">
+              <button type="button" class="btn btn-primary" (click)="openPendingPqrsModal()">
                 <i class="bi bi-plus-circle me-2"></i>Ver Solicitudes Pendientes
               </button>
               <button class="btn btn-outline-secondary">
@@ -192,35 +182,29 @@
 
       <!-- Accesos Rápidos -->
       <div class="col-lg-12">
-        <div class="card">
+        <div class="card quick-access-card">
           <div class="card-body">
-            <h3 class="card-title mb-4">Accesos Rápidos</h3>
+            <h3 class="card-title mb-4">
+              <i class="bi bi-lightning-charge-fill me-2 text-warning"></i>
+              Accesos Rápidos
+            </h3>
             <div class="row g-4">
-              <!-- Primer acceso: Registrar Empleado (solo admin) o Calendario (usuarios normales) -->
+              <!-- Primer acceso: Registrar Empleado (solo admin) -->
               <div class="col-6 col-md-3" *ngIf="isAdmin">
                 <div class="quick-card" (click)="openRegistrationModal()" style="cursor: pointer;">
                   <div class="quick-icon bg-primary">
-                    <i class="bi bi-person-plus"></i>
+                    <i class="bi bi-person-plus-fill"></i>
                   </div>
                   <h4>Registrar Empleado</h4>
                   <p>Añadir nuevo</p>
                 </div>
               </div>
-              <!-- <div class="col-6 col-md-3" *ngIf="!isAdmin">
-                <div class="quick-card">
-                  <div class="quick-icon bg-info">
-                    <i class="bi bi-calendar-check"></i>
-                  </div>
-                  <h4>Calendario</h4>
-                  <p>Eventos y reuniones</p>
-                </div>
-              </div> -->
 
               <!-- Resto de accesos rápidos -->
               <div class="col-6 col-md-3">
                 <div class="quick-card" (click)="openRecipesModal()" style="cursor: pointer;">
                   <div class="quick-icon bg-warning">
-                    <i class="bi bi-journal-plus"></i> <!-- Icono de cuaderno con signo más -->
+                    <i class="bi bi-journal-plus"></i>
                   </div>
                   <h4>Agregar Recetas</h4>
                   <p>Nuevas preparaciones</p>
@@ -238,7 +222,7 @@
               <div class="col-6 col-md-3">
                 <div class="quick-card">
                   <div class="quick-icon bg-success">
-                    <i class="bi bi-gear"></i>
+                    <i class="bi bi-gear-fill"></i>
                   </div>
                   <h4>Configuración</h4>
                   <p>Preferencias</p>

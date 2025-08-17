@@ -15,4 +15,8 @@ export class PqrService {
   getAllPQR(): Observable<any> {
     return this.http.get(`${this.baseUrl}/employees/get-all-pqr`);
   }
+
+  resolvePQR(solutionData: { id: any; solution: string; employeeId: string | null; }): Observable<any> {
+    return this.http.post(`${this.baseUrl}/employees/resolve-pqr`, solutionData);
+  }
 }
