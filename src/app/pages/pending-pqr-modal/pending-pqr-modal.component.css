@@ -1,0 +1,51 @@
+.modal {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.pqr-details {
+  animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.pqr-info {
+  font-size: 0.95rem;
+}
+
+.fw-medium {
+  font-weight: 500;
+}
+
+.badge {
+  font-weight: 500;
+  padding: 0.35em 0.65em;
+}
+
+textarea.form-control {
+  border: 1px solid #ced4da;
+  transition: border-color 0.2s ease-in-out;
+}
+
+textarea.form-control:focus {
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Estilo para la navegación */
+.btn-outline-secondary {
+  border-color: #dee2e6;
+}
+
+.btn-outline-secondary:hover:not(:disabled) {
+  background-color: #f8f9fa;
+  border-color: #ced4da;
+  color: #212529;
+}
+
+/* Estilo del contador */
+.badge.bg-primary {
+  background-color: #0d6efd !important;
+}

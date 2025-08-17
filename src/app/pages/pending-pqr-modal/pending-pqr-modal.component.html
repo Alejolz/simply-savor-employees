@@ -1,0 +1,110 @@
+<div class="modal fade" [class.show]="isVisible" [style.display]="isVisible ? 'block' : 'none'" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="bi bi-exclamation-circle-fill text-warning me-2"></i>
+          Solicitudes Pendientes
+        </h5>
+        <button type="button" class="btn-close" (click)="close()"></button>
+      </div>
+      
+      <div class="modal-body">
+        <div *ngIf="loading" class="text-center p-4">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando...</span>
+          </div>
+          <p class="mt-2">Cargando solicitudes...</p>
+        </div>
+
+        <div *ngIf="!loading && pendingPqrs.length === 0" class="text-center p-4">
+          <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+          <h4 class="mt-3">¡No hay solicitudes pendientes!</h4>
+          <p class="text-muted">Todas las solicitudes han sido atendidas.</p>
+        </div>
+        
+        <div *ngIf="!loading && currentPqr" class="pqr-details">
+          <!-- Navegación entre PQRs y contador -->
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <button class="btn btn-sm btn-outline-secondary" [disabled]="currentIndex === 0" (click)="prevPqr()">
+              <i class="bi bi-chevron-left"></i> Anterior
+            </button>
+            
+            <span class="badge bg-primary">{{ currentIndex + 1 }} de {{ pendingPqrs.length }}</span>
+            
+            <button class="btn btn-sm btn-outline-secondary" [disabled]="currentIndex === pendingPqrs.length - 1" (click)="nextPqr()">
+              Siguiente <i class="bi bi-chevron-right"></i>
+            </button>
+          </div>
+          
+          <!-- Detalles de la solicitud -->
+          <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h5 class="mb-0">{{ currentPqr.title }}</h5>
+              <span class="badge" [ngClass]="{
+                'bg-warning text-dark': currentPqr.status === 'SIN RESOLVER',
+                'bg-success': currentPqr.status === 'RESUELTO'
+              }">{{ currentPqr.status }}</span>
+            </div>
+            
+            <div class="card-body">
+              <div class="pqr-info">
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <p class="mb-1 text-muted small">Tipo de solicitud</p>
+                    <p class="mb-0 fw-medium">{{ currentPqr.type }}</p>
+                  </div>
+                  <div class="col-md-6">
+                    <p class="mb-1 text-muted small">Fecha de creación</p>
+                    <p class="mb-0 fw-medium">{{ getFormattedDate(currentPqr.creationDate) }}</p>
+                  </div>
+                </div>
+                
+                <div class="mb-3">
+                  <p class="mb-1 text-muted small">Descripción de la solicitud</p>
+                  <div class="p-3 bg-light rounded">
+                    {{ currentPqr.description }}
+                  </div>
+                </div>
+                
+                <div class="mb-3">
+                  <p class="mb-1 text-muted small">ID de Usuario</p>
+                  <p>{{ currentPqr.userId }}</p>
+                </div>
+
+                <!-- Formulario para la solución -->
+                <div class="mb-3">
+                  <label for="solutionInput" class="form-label fw-bold">
+                    <i class="bi bi-pencil-square me-2"></i>Ingrese su solución:
+                  </label>
+                  <textarea 
+                    id="solutionInput" 
+                    class="form-control" 
+                    rows="4"
+                    [(ngModel)]="solutionText"
+                    placeholder="Detalle aquí cómo se resolvió la solicitud..."
+                    required></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" (click)="close()">Cerrar</button>
+        <button 
+          type="button" 
+          class="btn btn-primary" 
+          *ngIf="currentPqr" 
+          (click)="submitSolution()" 
+          [disabled]="!solutionText.trim() || loading">
+          <i class="bi bi-check2-circle me-1"></i>
+          Resolver Solicitud
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Overlay de fondo -->
+<div class="modal-backdrop fade show" *ngIf="isVisible"></div>

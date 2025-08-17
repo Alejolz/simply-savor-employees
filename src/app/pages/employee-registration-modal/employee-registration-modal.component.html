@@ -1,0 +1,143 @@
+<div class="custom-modal" [class.show]="isVisible">
+  <div class="custom-modal-overlay" (click)="close()"></div>
+  <div class="custom-modal-container">
+    <div class="custom-modal-header">
+      <h4 class="custom-modal-title">Registro de Nuevo Empleado</h4>
+      <button type="button" class="custom-modal-close" (click)="close()">&times;</button>
+    </div>
+    
+    <div class="custom-modal-body">
+      <!-- Mensaje de error -->
+      <div class="alert alert-danger" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+      
+      <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()">
+        <!-- Nombre completo -->
+        <div class="form-group mb-3">
+          <label for="userName" class="form-label">Nombre completo</label>
+          <input 
+            type="text" 
+            class="form-control" 
+            id="userName" 
+            formControlName="userName" 
+            [class.is-invalid]="employeeForm.get('userName')?.invalid && employeeForm.get('userName')?.touched"
+          >
+          <div class="invalid-feedback" *ngIf="employeeForm.get('userName')?.errors?.['required'] && employeeForm.get('userName')?.touched">
+            El nombre es requerido
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="form-group mb-3">
+          <label for="employeeEmail" class="form-label">Correo electrónico</label>
+          <input 
+            type="email" 
+            class="form-control" 
+            id="employeeEmail" 
+            formControlName="employeeEmail" 
+            [class.is-invalid]="employeeForm.get('employeeEmail')?.invalid && employeeForm.get('employeeEmail')?.touched"
+          >
+          <div class="invalid-feedback" *ngIf="employeeForm.get('employeeEmail')?.errors?.['required'] && employeeForm.get('employeeEmail')?.touched">
+            El correo electrónico es requerido
+          </div>
+          <div class="invalid-feedback" *ngIf="employeeForm.get('employeeEmail')?.errors?.['email'] && employeeForm.get('employeeEmail')?.touched">
+            Ingrese un correo electrónico válido
+          </div>
+        </div>
+
+        <!-- Teléfono -->
+        <div class="form-group mb-3">
+          <label for="employeePhone" class="form-label">Teléfono</label>
+          <input 
+            type="tel" 
+            class="form-control" 
+            id="employeePhone" 
+            formControlName="employeePhone" 
+            [class.is-invalid]="employeeForm.get('employeePhone')?.invalid && employeeForm.get('employeePhone')?.touched"
+          >
+          <div class="invalid-feedback" *ngIf="employeeForm.get('employeePhone')?.errors?.['required'] && employeeForm.get('employeePhone')?.touched">
+            El teléfono es requerido
+          </div>
+        </div>
+
+        <div class="row">
+          <!-- Tipo de identificación -->
+          <div class="col-md-6 form-group mb-3">
+            <label for="identificationType" class="form-label">Tipo de identificación</label>
+            <select 
+              class="form-select" 
+              id="identificationType" 
+              formControlName="identificationType"
+              [class.is-invalid]="employeeForm.get('identificationType')?.invalid && employeeForm.get('identificationType')?.touched"
+            >
+              <option value="" disabled selected>Seleccione...</option>
+              <option *ngFor="let type of identificationTypes" [value]="type.value">{{ type.text }}</option>
+            </select>
+            <div class="invalid-feedback" *ngIf="employeeForm.get('identificationType')?.errors?.['required'] && employeeForm.get('identificationType')?.touched">
+              El tipo de identificación es requerido
+            </div>
+          </div>
+
+          <!-- Número de identificación -->
+          <div class="col-md-6 form-group mb-3">
+            <label for="employeeIdentification" class="form-label">Número de identificación</label>
+            <input 
+              type="text" 
+              class="form-control" 
+              id="employeeIdentification" 
+              formControlName="employeeIdentification" 
+              [class.is-invalid]="employeeForm.get('employeeIdentification')?.invalid && employeeForm.get('employeeIdentification')?.touched"
+            >
+            <div class="invalid-feedback" *ngIf="employeeForm.get('employeeIdentification')?.errors?.['required'] && employeeForm.get('employeeIdentification')?.touched">
+              El número de identificación es requerido
+            </div>
+          </div>
+        </div>
+
+        <!-- Rol del empleado -->
+        <div class="form-group mb-3">
+          <label for="employeeRole" class="form-label">Rol del empleado</label>
+          <select 
+            class="form-select" 
+            id="employeeRole" 
+            formControlName="employeeRole"
+            [class.is-invalid]="employeeForm.get('employeeRole')?.invalid && employeeForm.get('employeeRole')?.touched"
+          >
+            <option value="" disabled selected>Seleccione...</option>
+            <option *ngFor="let role of employeeRoles" [value]="role.value">{{ role.text }}</option>
+          </select>
+          <div class="invalid-feedback" *ngIf="employeeForm.get('employeeRole')?.errors?.['required'] && employeeForm.get('employeeRole')?.touched">
+            El rol del empleado es requerido
+          </div>
+        </div>
+
+        <!-- Contraseña -->
+        <div class="form-group mb-3">
+          <label for="employeePassword" class="form-label">Contraseña</label>
+          <input 
+            type="password" 
+            class="form-control" 
+            id="employeePassword" 
+            formControlName="employeePassword" 
+            [class.is-invalid]="employeeForm.get('employeePassword')?.invalid && employeeForm.get('employeePassword')?.touched"
+          >
+          <div class="invalid-feedback" *ngIf="employeeForm.get('employeePassword')?.errors?.['required'] && employeeForm.get('employeePassword')?.touched">
+            La contraseña es requerida
+          </div>
+          <div class="invalid-feedback" *ngIf="employeeForm.get('employeePassword')?.errors?.['minlength'] && employeeForm.get('employeePassword')?.touched">
+            La contraseña debe tener al menos 8 caracteres
+          </div>
+        </div>
+      </form>
+    </div>
+    
+    <div class="custom-modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="close()">Cancelar</button>
+      <button type="button" class="btn btn-primary" [disabled]="isSubmitting || employeeForm.invalid" (click)="onSubmit()">
+        <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+        Registrar Empleado
+      </button>
+    </div>
+  </div>
+</div>

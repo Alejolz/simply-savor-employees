@@ -1,0 +1,202 @@
+<div class="custom-modal" [class.show]="isVisible">
+  <div class="custom-modal-overlay" (click)="close()"></div>
+  <div class="custom-modal-container">
+    <div class="custom-modal-header">
+      <h4 class="custom-modal-title">Registrar Recetas</h4>
+      <button type="button" class="custom-modal-close" (click)="close()">&times;</button>
+    </div>
+
+    <div class="custom-modal-body">
+      <!-- Mensaje de error -->
+      <div class="alert alert-danger" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
+      <!-- Mensaje de éxito -->
+      <div class="alert alert-success" *ngIf="successMessage">
+        {{ successMessage }}
+      </div>
+
+      <!-- Opciones de registro -->
+      <ul class="nav nav-tabs mb-3" id="recipeEntryTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="single-tab" data-bs-toggle="tab" data-bs-target="#single-recipe"
+            type="button" role="tab" aria-controls="single-recipe" aria-selected="true"
+            (click)="setRegistrationMode('single')">
+            Receta Individual
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="bulk-tab" data-bs-toggle="tab" data-bs-target="#bulk-recipes" type="button"
+            role="tab" aria-controls="bulk-recipes" aria-selected="false" (click)="setRegistrationMode('bulk')">
+            Cargar Múltiples Recetas
+          </button>
+        </li>
+      </ul>
+
+      <div class="tab-content" id="recipeEntryTabContent">
+        <!-- Registro de receta individual -->
+        <div class="tab-pane fade show active" id="single-recipe" role="tabpanel" aria-labelledby="single-tab">
+          <form [formGroup]="recipeForm" (ngSubmit)="onSubmit()">
+            <!-- Título de la receta (TITULO) -->
+            <div class="form-group mb-3">
+              <label for="title" class="form-label">Título de la receta</label>
+              <input type="text" class="form-control" id="title" formControlName="title"
+                [class.is-invalid]="recipeForm.get('title')?.invalid && recipeForm.get('title')?.touched">
+              <div class="invalid-feedback"
+                *ngIf="recipeForm.get('title')?.errors?.['required'] && recipeForm.get('title')?.touched">
+                El título de la receta es requerido
+              </div>
+            </div>
+
+            <!-- Ingredientes (INGREDIENTES) -->
+            <div class="form-group mb-3">
+              <label for="ingredients" class="form-label">Ingredientes</label>
+              <textarea class="form-control" id="ingredients" formControlName="ingredients" rows="4"
+                placeholder="Ej: 200g de harina, 2 huevos, 100ml de leche..."
+                [class.is-invalid]="recipeForm.get('ingredients')?.invalid && recipeForm.get('ingredients')?.touched"></textarea>
+              <div class="invalid-feedback"
+                *ngIf="recipeForm.get('ingredients')?.errors?.['required'] && recipeForm.get('ingredients')?.touched">
+                Los ingredientes son requeridos
+              </div>
+              <small class="form-text text-muted">Escribe los ingredientes separados por comas</small>
+            </div>
+
+            <!-- Duración (DURACION) -->
+            <div class="form-group mb-3">
+              <label for="duration" class="form-label">Duración (minutos)</label>
+              <input type="text" class="form-control" id="duration" formControlName="duration" 
+                placeholder="Ej: 1 hora"
+                [class.is-invalid]="recipeForm.get('duration')?.invalid && recipeForm.get('duration')?.touched">
+              <div class="invalid-feedback"
+                *ngIf="recipeForm.get('duration')?.invalid && recipeForm.get('duration')?.touched">
+                Ingrese un tiempo válido
+              </div>
+            </div>
+
+            <!-- Paso a paso (PASO_A_PASO) con agregar uno por uno -->
+            <div class="form-group mb-3">
+              <label class="form-label">Paso a paso</label>
+              
+              <!-- Lista de pasos ya agregados -->
+              <div class="mb-2" *ngIf="recipeSteps.length > 0">
+                <div class="list-group">
+                  <div class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let step of recipeSteps; let i = index">
+                    <span>{{i+1}}. {{step}}</span>
+                    <button type="button" class="btn btn-sm btn-danger" (click)="removeStep(i)">
+                      <i class="bi bi-trash"></i> Eliminar
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Formulario para agregar nuevo paso -->
+              <div class="input-group mb-2">
+                <input type="text" class="form-control" placeholder="Escribe un paso de la receta" 
+                       [(ngModel)]="newStep" [ngModelOptions]="{standalone: true}">
+                <button class="btn btn-outline-primary" type="button" (click)="addStep()">
+                  Agregar Paso
+                </button>
+              </div>
+              
+              <div class="invalid-feedback d-block" *ngIf="showStepsError">
+                Debe agregar al menos un paso
+              </div>
+              
+              <small class="form-text text-muted">Agrega los pasos uno por uno en orden</small>
+            </div>
+
+            <div class="row">
+              <!-- Categoría (ID_CATEGORIA) -->
+              <div class="col-md-6 form-group mb-3">
+                <label for="categoryId" class="form-label">Categoría</label>
+                <select class="form-select" id="categoryId" formControlName="categoryId"
+                  [class.is-invalid]="recipeForm.get('categoryId')?.invalid && recipeForm.get('categoryId')?.touched">
+                  <option value="" disabled selected>Seleccione...</option>
+                  <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
+                </select>
+                <div class="invalid-feedback"
+                  *ngIf="recipeForm.get('categoryId')?.errors?.['required'] && recipeForm.get('categoryId')?.touched">
+                  La categoría es requerida
+                </div>
+              </div>
+
+              <!-- Dificultad (ID_DIFICULTAD) -->
+              <div class="col-md-6 form-group mb-3">
+                <label for="difficultyId" class="form-label">Dificultad</label>
+                <select class="form-select" id="difficultyId" formControlName="difficultyId"
+                  [class.is-invalid]="recipeForm.get('difficultyId')?.invalid && recipeForm.get('difficultyId')?.touched">
+                  <option value="" disabled selected>Seleccione...</option>
+                  <option *ngFor="let difficulty of difficulties" [value]="difficulty.id">{{ difficulty.name }}</option>
+                </select>
+                <div class="invalid-feedback"
+                  *ngIf="recipeForm.get('difficultyId')?.errors?.['required'] && recipeForm.get('difficultyId')?.touched">
+                  La dificultad es requerida
+                </div>
+              </div>
+            </div>
+
+            <div class="d-grid gap-2 mt-3">
+              <button type="submit" class="btn btn-primary" [disabled]="isSubmitting || recipeForm.invalid">
+                <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status"
+                  aria-hidden="true"></span>
+                Registrar Receta
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Carga masiva de recetas -->
+        <div class="tab-pane fade" id="bulk-recipes" role="tabpanel" aria-labelledby="bulk-tab">
+          <div class="bulk-upload-container">
+            <div class="card mb-3">
+              <div class="card-body">
+                <h5 class="card-title">Carga de archivo de recetas</h5>
+                <p class="card-text">
+                  Carga un archivo .txt que contenga una lista de objetos JSON, donde cada objeto representa una receta
+                  con los campos: TITULO, INGREDIENTES, DURACION, PASO_A_PASO, ID_CATEGORIA e ID_DIFICULTAD.
+                </p>
+                <div class="mb-3">
+                  <label for="recipeFile" class="form-label">Seleccionar archivo</label>
+                  <input class="form-control" type="file" id="recipeFile" accept=".txt,.json"
+                    (change)="handleFileInput($event)">
+                  <div class="form-text">El archivo debe ser de formato .txt o .json</div>
+                </div>
+
+                <div *ngIf="fileUploaded" class="mb-3">
+                  <div class="alert alert-info">
+                    <strong>Archivo cargado:</strong> {{fileName}}
+                    <div>Se han encontrado {{recipesInFile}} recetas en el archivo.</div>
+                  </div>
+                </div>
+
+                <div class="d-grid gap-2">
+                  <button type="button" class="btn btn-primary" [disabled]="isSubmitting || !fileUploaded"
+                    (click)="uploadBulkRecipes()">
+                    <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status"
+                      aria-hidden="true"></span>
+                    Cargar Recetas
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Formato del archivo</h5>
+                <p class="card-text">El archivo debe contener un array JSON con este formato:</p>
+                <pre class="bg-light p-3 rounded">
+
+                </pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="custom-modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="close()">Cerrar</button>
+    </div>
+  </div>
+</div>

@@ -5,25 +5,31 @@
       <a class="navbar-brand" href="#">
         <i class="bi bi-building"></i> Portal de Empleados
       </a>
-      
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      
+
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" 
-              role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              <div class="avatar-circle me-2">U</div>
-              <span>Usuario</span>
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              <div class="avatar-circle me-2">{{ userInitial }}</div>
+              <span>{{ employee?.userName || 'Usuario' }}</span>
             </a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
               <li><a class="dropdown-item" href="#"><i class="bi bi-person-circle me-2"></i>Mi Perfil</a></li>
               <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i>Configuración</a></li>
-              <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión</a></li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+              <li>
+                <a class="dropdown-item text-danger" style="cursor: pointer;" (click)="logout()">
+                  <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
+                </a>
+              </li>
             </ul>
           </li>
         </ul>
@@ -40,7 +46,7 @@
           <div class="card-body">
             <div class="row">
               <div class="col-md-6">
-                <h2 class="welcome-title">¡Bienvenido de nuevo!</h2>
+                <h2 class="welcome-title">¡Bienvenido de nuevo, {{ getUserFirstName() }}!</h2>
                 <p class="text-muted">Gestiona tus solicitudes e información</p>
               </div>
               <div class="col-md-6">
@@ -51,7 +57,7 @@
                         <i class="bi bi-file-earmark-text"></i>
                       </div>
                       <div class="stat-info">
-                        <h3>5</h3>
+                        <h3>{{ totalPqrs }}</h3>
                         <p>Solicitudes</p>
                       </div>
                     </div>
@@ -62,7 +68,7 @@
                         <i class="bi bi-check2-circle"></i>
                       </div>
                       <div class="stat-info">
-                        <h3>3</h3>
+                        <h3>{{ resolvedPqrs }}</h3>
                         <p>Resueltas</p>
                       </div>
                     </div>
@@ -82,7 +88,7 @@
         <div class="card h-100 profile-card">
           <div class="card-body">
             <div class="d-flex align-items-center mb-4">
-              <div class="avatar-lg me-3">U</div>
+
               <div>
                 <h3 class="card-title">Mi Perfil</h3>
                 <span class="badge bg-success">Activo</span>
@@ -93,44 +99,58 @@
                 <i class="bi bi-person"></i>
                 <div>
                   <p class="info-label">Nombre</p>
-                  <p class="info-value">Usuario</p>
+                  <p class="info-value">{{ employee?.userName || 'No disponible' }}</p>
                 </div>
               </div>
               <div class="info-item">
                 <i class="bi bi-envelope"></i>
                 <div>
                   <p class="info-label">Email</p>
-                  <p class="info-value">email de ejemplo</p>
+                  <p class="info-value">{{ employee?.employeeEmail || 'No disponible' }}</p>
                 </div>
               </div>
+              <!-- <div class="info-item">
+                <i class="bi bi-telephone"></i>
+                <div>
+                  <p class="info-label">Teléfono</p>
+                  <p class="info-value">{{ employee?.employeePhone || 'No disponible' }}</p>
+                </div>
+              </div>
+              <div class="info-item">
+                <i class="bi bi-card-text"></i>
+                <div>
+                  <p class="info-label">Identificación</p>
+                  <p class="info-value">{{ employee?.employeeIdentification || 'No disponible' }}
+                    <span *ngIf="employee?.identificationType">({{ employee?.identificationType }})</span>
+                  </p>
+                </div>
+              </div> -->
               <div class="info-item">
                 <i class="bi bi-briefcase"></i>
                 <div>
                   <p class="info-label">Rol</p>
-                  <p class="info-value">Empleado</p>
+                  <p class="info-value">{{ employee?.employeeRole || 'No disponible' }}</p>
                 </div>
               </div>
             </div>
-            <button class="btn btn-outline-primary w-100 mt-3">
-              <i class="bi bi-pencil-square me-2"></i>Editar Perfil
-            </button>
           </div>
         </div>
       </div>
-      
+
       <!-- Sistema PQRS -->
       <div class="col-lg-8 mb-4">
         <div class="card h-100 pqrs-card">
           <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-4">
               <div class="d-flex align-items-center">
-                <div class="feature-icon bg-primary me-3">
-                  <i class="bi bi-clipboard-data"></i>
+                <div class="feature-icon bg-gradient-primary text-white rounded-circle p-3 me-3">
+                  <i class="bi bi-kanban fs-4"></i>
                 </div>
                 <h3 class="card-title mb-0">Sistema PQRS</h3>
               </div>
               <div class="dropdown">
-                <button class="btn btn-sm btn-light" type="button" id="pqrsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <button class="btn btn-sm btn-light" type="button" id="pqrsDropdown" data-bs-toggle="dropdown"
+                  aria-expanded="false">
                   <i class="bi bi-three-dots"></i>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="pqrsDropdown">
@@ -139,25 +159,27 @@
                 </ul>
               </div>
             </div>
-            
+
             <p class="card-description">
-              Gestión de Peticiones, Quejas, Reclamos y Sugerencias. Monitorea el estado de tus solicitudes y crea nuevas cuando sea necesario.
+              Gestión de Peticiones, Quejas, Reclamos y Sugerencias. Monitorea el estado de las solicitudes.
             </p>
-            
+
             <div class="pqrs-stats">
               <div class="progress-stat">
                 <div class="d-flex justify-content-between">
                   <span>Solicitudes Completadas</span>
-                  <span>60%</span>
+                  <span>{{ resolvedPercentage }}%</span>
                 </div>
                 <div class="progress">
-                  <div class="progress-bar bg-success" role="progressbar" style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                  <div class="progress-bar bg-success" role="progressbar" [style.width.%]="resolvedPercentage"
+                    [attr.aria-valuenow]="resolvedPercentage" aria-valuemin="0" aria-valuemax="100">
+                  </div>
                 </div>
               </div>
             </div>
-            
+
             <div class="d-grid gap-2 d-md-flex justify-content-md-start mt-4">
-              <button type="button" class="btn btn-outline-secondary">
+              <button type="button" class="btn btn-outline-secondary" (click)="openPendingPqrsModal()">
                 <i class="bi bi-plus-circle me-2"></i>Ver Solicitudes Pendientes
               </button>
               <button class="btn btn-outline-secondary">
@@ -174,7 +196,17 @@
           <div class="card-body">
             <h3 class="card-title mb-4">Accesos Rápidos</h3>
             <div class="row g-4">
-              <div class="col-6 col-md-3">
+              <!-- Primer acceso: Registrar Empleado (solo admin) o Calendario (usuarios normales) -->
+              <div class="col-6 col-md-3" *ngIf="isAdmin">
+                <div class="quick-card" (click)="openRegistrationModal()" style="cursor: pointer;">
+                  <div class="quick-icon bg-primary">
+                    <i class="bi bi-person-plus"></i>
+                  </div>
+                  <h4>Registrar Empleado</h4>
+                  <p>Añadir nuevo</p>
+                </div>
+              </div>
+              <!-- <div class="col-6 col-md-3" *ngIf="!isAdmin">
                 <div class="quick-card">
                   <div class="quick-icon bg-info">
                     <i class="bi bi-calendar-check"></i>
@@ -182,23 +214,25 @@
                   <h4>Calendario</h4>
                   <p>Eventos y reuniones</p>
                 </div>
-              </div>
+              </div> -->
+
+              <!-- Resto de accesos rápidos -->
               <div class="col-6 col-md-3">
-                <div class="quick-card">
+                <div class="quick-card" (click)="openRecipesModal()" style="cursor: pointer;">
                   <div class="quick-icon bg-warning">
-                    <i class="bi bi-file-earmark-text"></i>
+                    <i class="bi bi-journal-plus"></i> <!-- Icono de cuaderno con signo más -->
                   </div>
-                  <h4>Documentos</h4>
-                  <p>Ver archivos</p>
+                  <h4>Agregar Recetas</h4>
+                  <p>Nuevas preparaciones</p>
                 </div>
               </div>
               <div class="col-6 col-md-3">
                 <div class="quick-card">
                   <div class="quick-icon bg-danger">
-                    <i class="bi bi-chat-dots"></i>
+                    <i class="bi bi-pencil-square"></i>
                   </div>
-                  <h4>Mensajes</h4>
-                  <p>Comunicaciones</p>
+                  <h4>Editar perfil</h4>
+                  <p>Actualizar información</p>
                 </div>
               </div>
               <div class="col-6 col-md-3">
@@ -215,5 +249,15 @@
         </div>
       </div>
     </div>
+
+    <!-- Componente del modal para registro de empleados -->
+    <app-employee-registration-modal (employeeAdded)="handleEmployeeAdded($event)">
+    </app-employee-registration-modal>
+
+    <app-recipe-registration-modal (recipeAdded)="handleRecipeAdded($event)">
+    </app-recipe-registration-modal>
+
+    <app-pending-pqrs-modal (pqrResolved)="handlePqrResolved($event)"
+    (modalClosed)="handleModalClosed()"></app-pending-pqrs-modal>
   </div>
 </div>
