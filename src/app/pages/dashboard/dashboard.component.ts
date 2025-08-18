@@ -9,10 +9,40 @@ import { RecipeRegistrationModalComponent } from '../recipe-registration-modal/r
 import { PendingPqrsModalComponent } from '../pending-pqr-modal/pending-pqr-modal.component';
 import { PqrService } from '../../services/pqr/pqr.service';
 
+// Importación específica de todos los iconos que necesitamos
+import { 
+  LucideAngularModule, 
+  Building, 
+  Menu, 
+  ChevronDown,
+  User, 
+  Settings, 
+  LogOut, 
+  FileText, 
+  CheckCircle,
+  Mail, 
+  Briefcase, 
+  Kanban, 
+  MoreHorizontal,
+  Plus, 
+  List, 
+  Zap, 
+  UserPlus, 
+  BookOpen, 
+  Pencil
+} from 'lucide-angular';
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, EmployeeRegistrationModalComponent, RecipeRegistrationModalComponent, PendingPqrsModalComponent], // Añadir aquí el modal
+  imports: [
+    CommonModule, 
+    EmployeeRegistrationModalComponent, 
+    RecipeRegistrationModalComponent, 
+    PendingPqrsModalComponent,
+    // Importa LucideAngularModule y elige los iconos específicos que necesitas
+    LucideAngularModule
+  ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
@@ -30,6 +60,26 @@ export class DashboardComponent implements OnInit, OnDestroy {
   unresolvedPqrs: number = 0;
   resolvedPqrs: number = 0;
   resolvedPercentage: number = 0;
+  isMenuOpen: boolean = false; // Para controlar el menú en móviles
+
+  readonly Building = Building;
+  readonly Menu = Menu;
+  readonly ChevronDown = ChevronDown;
+  readonly User = User;
+  readonly Settings = Settings;
+  readonly LogOut = LogOut;
+  readonly FileText = FileText;
+  readonly CheckCircle = CheckCircle;
+  readonly Mail = Mail;
+  readonly Briefcase = Briefcase;
+  readonly Kanban = Kanban;
+  readonly MoreHorizontal = MoreHorizontal;
+  readonly Plus = Plus;
+  readonly List = List;
+  readonly Zap = Zap;
+  readonly UserPlus = UserPlus;
+  readonly BookOpen = BookOpen;
+  readonly Pencil = Pencil;
 
   constructor(
     private authService: AuthService,
@@ -37,8 +87,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private pqrService: PqrService
   ) { }
 
+  // El resto de tu código permanece igual
   ngOnInit(): void {
-
     this.loadPqrs();
     // Obtener datos del empleado actual
     this.employee = this.authService.getCurrentEmployee();
@@ -59,7 +109,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // Limpieza de suscripciones para evitar memory leaks
     if (this.employeeSubscription) {
       this.employeeSubscription.unsubscribe();
     }
@@ -70,12 +119,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.router.navigate(['/login']);
   }
 
-  // Método seguro para obtener el nombre del usuario
   getUserFirstName(): string {
     return this.employee?.userName?.split(' ')[0] || 'Usuario';
   }
 
-  // Método para abrir el modal de registro
   openRegistrationModal(): void {
     if (this.registrationModal) {
       this.registrationModal.open();
@@ -90,8 +137,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   handleEmployeeAdded(response: any): void {
     console.log('Empleado registrado:', response);
-
-    // Mostrar una alerta simple con el mensaje de éxito
     if (response && response.code === 'SR01') {
       alert('¡Usuario creado exitosamente!');
     } else {
@@ -109,21 +154,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
       next: (response) => {
         console.log('PQRs cargados:', response);
         this.pqrs = response.data || [];
-
-        // 👉 Calcular índices
         this.totalPqrs = this.pqrs.length;
         this.unresolvedPqrs = this.pqrs.filter(p => p.status === 'SIN RESOLVER').length;
         this.resolvedPqrs = this.pqrs.filter(p => p.status === 'RESUELTO').length;
-
         this.resolvedPercentage = this.totalPqrs > 0 
           ? Math.round((this.resolvedPqrs / this.totalPqrs) * 100) 
           : 0;
-
-        console.log('Totales:', {
-          total: this.totalPqrs,
-          sinResolver: this.unresolvedPqrs,
-          resueltos: this.resolvedPqrs
-        });
       },
       error: (err) => {
         console.error('Error al cargar los PQR:', err);
@@ -139,16 +175,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   handlePqrResolved(response: any): void {
     console.log('PQR resuelto:', response);
-    
-    // Recargar los datos de PQRs para actualizar los contadores
     this.loadPqrs();
-    
-    // Mostrar alerta de éxito
     alert('¡Solicitud resuelta exitosamente!');
   }
 
   handleModalClosed(): void {
     console.log('Modal cerrado - recargando datos');
-    this.loadPqrs(); // Recargar los datos
+    this.loadPqrs();
   }
 }
