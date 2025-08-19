@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, HostListener, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth/auth.service';
@@ -29,7 +29,8 @@ import {
   Zap, 
   UserPlus, 
   BookOpen, 
-  Pencil
+  Pencil,
+  X
 } from 'lucide-angular';
 
 @Component({
@@ -40,7 +41,6 @@ import {
     EmployeeRegistrationModalComponent, 
     RecipeRegistrationModalComponent, 
     PendingPqrsModalComponent,
-    // Importa LucideAngularModule y elige los iconos específicos que necesitas
     LucideAngularModule
   ],
   templateUrl: './dashboard.component.html',
@@ -50,17 +50,23 @@ export class DashboardComponent implements OnInit, OnDestroy {
   @ViewChild(EmployeeRegistrationModalComponent) registrationModal!: EmployeeRegistrationModalComponent;
   @ViewChild(RecipeRegistrationModalComponent) recipeModal!: RecipeRegistrationModalComponent;
   @ViewChild(PendingPqrsModalComponent) pendingPqrsModal!: PendingPqrsModalComponent;
+  @ViewChild('userMenuContent') userMenuContent!: ElementRef;  // Referencia al contenido del menú
+  @ViewChild('userMenuButton') userMenuButton!: ElementRef;    // Referencia al botón que abre el menú
+  @ViewChild('dropdownButton') dropdownButton!: ElementRef;    // Referencia al botón del dropdown
+  @ViewChild('dropdownContent') dropdownContent!: ElementRef;  // Referencia al contenido del dropdown
 
   employee: Employee | null = null;
   userInitial: string = 'U';
   isAdmin: boolean = false;
   private employeeSubscription!: Subscription;
-  pqrs: any[] = []
+  pqrs: any[] = [];
   totalPqrs: number = 0;
   unresolvedPqrs: number = 0;
   resolvedPqrs: number = 0;
   resolvedPercentage: number = 0;
   isMenuOpen: boolean = false; // Para controlar el menú en móviles
+  isUserMenuOpen: boolean = false;
+  isDropdownOpen: boolean = false; // Para el menú dropdown de PQRS
 
   readonly Building = Building;
   readonly Menu = Menu;
@@ -80,6 +86,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   readonly UserPlus = UserPlus;
   readonly BookOpen = BookOpen;
   readonly Pencil = Pencil;
+  readonly X = X;
 
   constructor(
     private authService: AuthService,
@@ -87,7 +94,41 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private pqrService: PqrService
   ) { }
 
-  // El resto de tu código permanece igual
+  @HostListener('document:click', ['\$event'])
+  handleClickOutside(event: MouseEvent) {
+    // Manejar cierre del menú de usuario
+    if (this.isUserMenuOpen) {
+      const userMenu = this.userMenuContent?.nativeElement;
+      const userButton = this.userMenuButton?.nativeElement;
+      
+      if (!userMenu?.contains(event.target) && !userButton?.contains(event.target)) {
+        this.isUserMenuOpen = false;
+      }
+    }
+
+    // Manejar cierre del dropdown de PQR
+    if (this.isDropdownOpen) {
+      const dropdownContent = this.dropdownContent?.nativeElement;
+      const dropdownButton = this.dropdownButton?.nativeElement;
+
+      if (!dropdownContent?.contains(event.target) && !dropdownButton?.contains(event.target)) {
+        this.isDropdownOpen = false;
+      }
+    }
+  }
+
+  // Método para alternar el menú de usuario
+  toggleUserMenu(event: Event) {
+    event.stopPropagation();
+    this.isUserMenuOpen = !this.isUserMenuOpen;
+  }
+
+  // Método para alternar el dropdown de PQR
+  toggleDropdown(event?: Event) {
+    if (event) event.stopPropagation();
+    this.isDropdownOpen = !this.isDropdownOpen;
+  }
+
   ngOnInit(): void {
     this.loadPqrs();
     // Obtener datos del empleado actual

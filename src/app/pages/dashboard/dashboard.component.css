@@ -109,3 +109,16 @@
 .bg-gradient-success {
   @apply bg-gradient-to-r from-success to-green-700;
 }
+
+/* Agrega esto a tu archivo de estilos (styles.css o component.scss) */
+.glass-strong {
+  background-color: rgba(255, 255, 255, 0.8);  /* Fondo blanco con transparencia */
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Esto ajusta el estilo del texto con degradado */
+.bg-gradient-primary {
+  background: linear-gradient(to right, #11a92f, #067f2d);
+}
