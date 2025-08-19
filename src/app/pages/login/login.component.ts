@@ -2,29 +2,40 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../services/users/user.service';
 import { Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
 
-  email: string = '';
-  password: string = '';
   errorMessage: string = '';
   isLoading: boolean = false;
 
   constructor(private userService: UserService, private router: Router) {}
 
-  onSubmit() {
+  onSubmit(event: Event) {
+    event.preventDefault(); // Evita refresh del navegador
+    
+    const form = event.target as HTMLFormElement;
+
+    // ✅ Validación nativa del navegador
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    // Obtener valores de los inputs
+    const email = (form.querySelector('#email') as HTMLInputElement).value;
+    const password = (form.querySelector('#password') as HTMLInputElement).value;
+
     this.isLoading = true;
     this.errorMessage = '';
-    
-    this.userService.login(this.email, this.password).subscribe({
+
+    this.userService.login(email, password).subscribe({
       next: (res) => {
         if (res.status === 200) {
           console.log('✅ Login exitoso');
