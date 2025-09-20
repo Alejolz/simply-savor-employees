@@ -65,8 +65,7 @@
             <!-- Duración (DURACION) -->
             <div class="form-group mb-3">
               <label for="duration" class="form-label">Duración (minutos)</label>
-              <input type="text" class="form-control" id="duration" formControlName="duration" 
-                placeholder="Ej: 1 hora"
+              <input type="text" class="form-control" id="duration" formControlName="duration" placeholder="Ej: 1 hora"
                 [class.is-invalid]="recipeForm.get('duration')?.invalid && recipeForm.get('duration')?.touched">
               <div class="invalid-feedback"
                 *ngIf="recipeForm.get('duration')?.invalid && recipeForm.get('duration')?.touched">
@@ -74,14 +73,35 @@
               </div>
             </div>
 
+            <div class="form-group mb-3">
+              <label for="servings" class="form-label">Porciones</label>
+              <input type="number" class="form-control" id="servings" formControlName="servings" min="1" max="20"
+                placeholder="Ej: 4"
+                [class.is-invalid]="recipeForm.get('servings')?.invalid && recipeForm.get('servings')?.touched">
+              <div class="invalid-feedback"
+                *ngIf="recipeForm.get('servings')?.errors?.['required'] && recipeForm.get('servings')?.touched">
+                El número de porciones es requerido
+              </div>
+              <div class="invalid-feedback"
+                *ngIf="recipeForm.get('servings')?.errors?.['min'] && recipeForm.get('servings')?.touched">
+                El mínimo es 1 porción
+              </div>
+              <div class="invalid-feedback"
+                *ngIf="recipeForm.get('servings')?.errors?.['max'] && recipeForm.get('servings')?.touched">
+                El máximo es 20 porciones
+              </div>
+              <small class="form-text text-muted">Indica para cuántas personas es esta receta</small>
+            </div>
+
             <!-- Paso a paso (PASO_A_PASO) con agregar uno por uno -->
             <div class="form-group mb-3">
               <label class="form-label">Paso a paso</label>
-              
+
               <!-- Lista de pasos ya agregados -->
               <div class="mb-2" *ngIf="recipeSteps.length > 0">
                 <div class="list-group">
-                  <div class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let step of recipeSteps; let i = index">
+                  <div class="list-group-item d-flex justify-content-between align-items-center"
+                    *ngFor="let step of recipeSteps; let i = index">
                     <span>{{i+1}}. {{step}}</span>
                     <button type="button" class="btn btn-sm btn-danger" (click)="removeStep(i)">
                       <i class="bi bi-trash"></i> Eliminar
@@ -89,20 +109,20 @@
                   </div>
                 </div>
               </div>
-              
+
               <!-- Formulario para agregar nuevo paso -->
               <div class="input-group mb-2">
-                <input type="text" class="form-control" placeholder="Escribe un paso de la receta" 
-                       [(ngModel)]="newStep" [ngModelOptions]="{standalone: true}">
+                <input type="text" class="form-control" placeholder="Escribe un paso de la receta" [(ngModel)]="newStep"
+                  [ngModelOptions]="{standalone: true}">
                 <button class="btn btn-outline-primary" type="button" (click)="addStep()">
                   Agregar Paso
                 </button>
               </div>
-              
+
               <div class="invalid-feedback d-block" *ngIf="showStepsError">
                 Debe agregar al menos un paso
               </div>
-              
+
               <small class="form-text text-muted">Agrega los pasos uno por uno en orden</small>
             </div>
 

@@ -62,6 +62,7 @@ export class RecipeRegistrationModalComponent implements OnInit {
       ingredients: ['', Validators.required],
       duration: ['', [Validators.required, Validators.min(1)]],
       // El campo steps ya no es necesario en el formulario ya que usaremos recipeSteps
+      servings: ['', [Validators.required, Validators.min(1), Validators.max(20)]],
       categoryId: ['', Validators.required],
       difficultyId: ['', Validators.required]
     });
@@ -148,6 +149,7 @@ export class RecipeRegistrationModalComponent implements OnInit {
       TITULO: this.recipeForm.value.title,
       INGREDIENTES: this.recipeForm.value.ingredients,
       DURACION: this.recipeForm.value.duration,
+      PORCIONES: this.recipeForm.value.servings,
       PASO_A_PASO: formattedSteps, // Usar los pasos formateados
       ID_CATEGORIA: this.recipeForm.value.categoryId,
       ID_DIFICULTAD: this.recipeForm.value.difficultyId
@@ -222,7 +224,7 @@ export class RecipeRegistrationModalComponent implements OnInit {
         
         content.forEach(recipe => {
           // Verificar que todos los campos requeridos existan y no sean nulos
-          if (recipe.TITULO && recipe.INGREDIENTES && recipe.DURACION && recipe.PASO_A_PASO && 
+          if (recipe.TITULO && recipe.INGREDIENTES && recipe.DURACION && recipe.PORCIONES && recipe.PASO_A_PASO && 
               recipe.ID_CATEGORIA !== null && recipe.ID_CATEGORIA !== undefined && 
               recipe.ID_DIFICULTAD !== null && recipe.ID_DIFICULTAD !== undefined) {
             validRecipes.push(recipe);
