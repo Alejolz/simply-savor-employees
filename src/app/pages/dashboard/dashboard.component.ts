@@ -7,40 +7,47 @@ import { Subscription } from 'rxjs';
 import { EmployeeRegistrationModalComponent } from '../employee-registration-modal/employee-registration-modal.component';
 import { RecipeRegistrationModalComponent } from '../recipe-registration-modal/recipe-registration-modal.component';
 import { PendingPqrsModalComponent } from '../pending-pqr-modal/pending-pqr-modal.component';
+import { RecipeViewEditModalComponent } from '../recipe-view-edit-modal/recipe-view-edit-modal.component';
+import { EmployeeProfileModalComponent } from '../employee-profile-modal/employee-profile-modal.component';
 import { PqrService } from '../../services/pqr/pqr.service';
 
 // Importación específica de todos los iconos que necesitamos
-import { 
-  LucideAngularModule, 
-  Building, 
-  Menu, 
+import {
+  LucideAngularModule,
+  Building,
+  Menu,
   ChevronDown,
-  User, 
-  Settings, 
-  LogOut, 
-  FileText, 
+  User,
+  Settings,
+  LogOut,
+  FileText,
   CheckCircle,
-  Mail, 
-  Briefcase, 
-  Kanban, 
+  Mail,
+  Briefcase,
+  Kanban,
   MoreHorizontal,
-  Plus, 
-  List, 
-  Zap, 
-  UserPlus, 
-  BookOpen, 
+  Plus,
+  List,
+  Zap,
+  UserPlus,
+  BookOpen,
   Pencil,
-  X
+  Utensils,
+  UtensilsCrossed,
+  BookPlus,
+  X,
 } from 'lucide-angular';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [
-    CommonModule, 
-    EmployeeRegistrationModalComponent, 
-    RecipeRegistrationModalComponent, 
+    CommonModule,
+    EmployeeRegistrationModalComponent,
+    RecipeRegistrationModalComponent,
     PendingPqrsModalComponent,
+    RecipeViewEditModalComponent,
+    EmployeeProfileModalComponent,
     LucideAngularModule
   ],
   templateUrl: './dashboard.component.html',
@@ -50,6 +57,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   @ViewChild(EmployeeRegistrationModalComponent) registrationModal!: EmployeeRegistrationModalComponent;
   @ViewChild(RecipeRegistrationModalComponent) recipeModal!: RecipeRegistrationModalComponent;
   @ViewChild(PendingPqrsModalComponent) pendingPqrsModal!: PendingPqrsModalComponent;
+  @ViewChild(RecipeViewEditModalComponent) recipeDetailsModal!: RecipeViewEditModalComponent;
+  @ViewChild(EmployeeProfileModalComponent) profileModal!: EmployeeProfileModalComponent;
   @ViewChild('userMenuContent') userMenuContent!: ElementRef;  // Referencia al contenido del menú
   @ViewChild('userMenuButton') userMenuButton!: ElementRef;    // Referencia al botón que abre el menú
   @ViewChild('dropdownButton') dropdownButton!: ElementRef;    // Referencia al botón del dropdown
@@ -86,6 +95,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   readonly UserPlus = UserPlus;
   readonly BookOpen = BookOpen;
   readonly Pencil = Pencil;
+  readonly Utensils = Utensils;
+  readonly UtensilsCrossed = UtensilsCrossed;
+  readonly BookPlus = BookPlus;
+
   readonly X = X;
 
   constructor(
@@ -100,7 +113,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (this.isUserMenuOpen) {
       const userMenu = this.userMenuContent?.nativeElement;
       const userButton = this.userMenuButton?.nativeElement;
-      
+
       if (!userMenu?.contains(event.target) && !userButton?.contains(event.target)) {
         this.isUserMenuOpen = false;
       }
@@ -176,6 +189,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
+  openRecipeDetailsModal(): void {
+    if (this.recipeDetailsModal) {
+      this.recipeDetailsModal.open();
+    }
+  }
+
   handleEmployeeAdded(response: any): void {
     console.log('Empleado registrado:', response);
     if (response && response.code === 'SR01') {
@@ -190,6 +209,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
     alert('¡Receta registrada exitosamente!');
   }
 
+  handleRecipeUpdated(response: any): void {
+    console.log('Receta actualizada:', response);
+    alert('¡Receta actualizada exitosamente!');
+  }
+
   loadPqrs(): void {
     this.pqrService.getAllPQR().subscribe({
       next: (response) => {
@@ -198,8 +222,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.totalPqrs = this.pqrs.length;
         this.unresolvedPqrs = this.pqrs.filter(p => p.status === 'SIN RESOLVER').length;
         this.resolvedPqrs = this.pqrs.filter(p => p.status === 'RESUELTO').length;
-        this.resolvedPercentage = this.totalPqrs > 0 
-          ? Math.round((this.resolvedPqrs / this.totalPqrs) * 100) 
+        this.resolvedPercentage = this.totalPqrs > 0
+          ? Math.round((this.resolvedPqrs / this.totalPqrs) * 100)
           : 0;
       },
       error: (err) => {
@@ -224,4 +248,26 @@ export class DashboardComponent implements OnInit, OnDestroy {
     console.log('Modal cerrado - recargando datos');
     this.loadPqrs();
   }
+
+  // Métodos para manejar eventos del modal
+  handleRecipeSelected(recipe: any): void {
+    console.log('Receta seleccionada:', recipe);
+    // Aquí puedes implementar la lógica para editar la receta
+  }
+
+  handleRecipeDeleted(recipeId: number): void {
+    console.log('Receta eliminada:', recipeId);
+  }
+
+  openEmployeeProfileModal(editMode: boolean = false): void {
+    if (this.profileModal) {
+      console.log('Abriendo modal del perfil del empleado');
+      this.profileModal.open();
+      this.profileModal.isEditing = editMode;
+    } else {
+      console.warn('⚠️ No se encontró el modal del perfil');
+    }
+  }
+
 }
+

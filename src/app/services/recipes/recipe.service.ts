@@ -16,4 +16,17 @@ export class RecipeService {
   addRecipe(recipeData: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/employees/add-recipes`, recipeData);
   }
+
+  // Obtener todas las recetas
+  getAllRecipes(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/get-all-recipes`);
+  }
+
+  deleteRecipe(recipeId: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/employees/delete-recipe/${recipeId}`);
+  }
+
+  updateRecipe(recipeId: number, updatedData: any): Observable<any> {
+  return this.http.put(`${this.baseUrl}/employees/update-recipe/${recipeId}`, updatedData);
+}
 }

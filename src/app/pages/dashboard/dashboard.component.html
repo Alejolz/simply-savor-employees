@@ -37,7 +37,7 @@
           <!-- Dropdown usuario con referencia #userMenuContent -->
           <div #userMenuContent *ngIf="isUserMenuOpen"
             class="absolute right-0 mt-2 w-56 bg-white backdrop-blur-md border border-gray-200 rounded-xl shadow-lg overflow-hidden z-50">
-            <a class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 cursor-pointer" href="#">
+            <a class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 cursor-pointer" (click)="openEmployeeProfileModal()">
               <lucide-icon [img]="User" class="mr-2 h-4 w-4"></lucide-icon> Mi Perfil
             </a>
             <a class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 cursor-pointer" href="#">
@@ -66,7 +66,7 @@
       </div>
       <div class="space-y-2">
         <button
-          class="flex items-center space-x-2 w-full text-left px-2 py-2 text-gray-700 hover:bg-gray-100 rounded-lg">
+          class="flex items-center space-x-2 w-full text-left px-2 py-2 text-gray-700 hover:bg-gray-100 rounded-lg" (click)="openEmployeeProfileModal()">
           <lucide-icon [img]="User" class="h-4 w-4"></lucide-icon>
           <span>Mi Perfil</span>
         </button>
@@ -139,7 +139,7 @@
     <!-- Grid -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
       <!-- Perfil -->
-      <div class="lg:col-span-4 fade-in" style="animation-delay: 100ms">
+      <div class="lg:col-span-4 fade-in" style="animation-delay: 100ms" (click)="openEmployeeProfileModal()">
         <div class="dashboard-card h-full p-6 rounded-2xl shadow-md hover:shadow-lg transition">
           <!-- Header -->
           <div class="flex items-center justify-between mb-6">
@@ -292,8 +292,17 @@
               </div>
             </div>
 
+            <div class="dashboard-card p-5 text-center cursor-pointer" (click)="openRecipeDetailsModal()">
+              <div
+                class="mx-auto w-16 h-16 flex items-center justify-center rounded-xl bg-gradient-indigo text-white mb-4 shadow-md">
+                <lucide-icon [img]="BookPlus" class="h-8 w-8"></lucide-icon>
+              </div>
+              <h4 class="font-semibold text-base mb-1">Ver y editar recetas</h4>
+              <p class="text-sm text-gray-500">Gestionar recetas</p>
+            </div>
+
             <div>
-              <div class="dashboard-card p-5 text-center cursor-pointer">
+              <div class="dashboard-card p-5 text-center cursor-pointer" (click)="openEmployeeProfileModal(true)">
                 <div
                   class="mx-auto w-16 h-16 flex items-center justify-center rounded-xl bg-gradient-danger text-white mb-4 shadow-md">
                   <lucide-icon [img]="Pencil" class="h-8 w-8"></lucide-icon>
@@ -306,13 +315,14 @@
             <div>
               <div class="dashboard-card p-5 text-center cursor-pointer">
                 <div
-                  class="mx-auto w-16 h-16 flex items-center justify-center rounded-xl bg-gradient-success text-white mb-4 shadow-md">
+                  class="mx-auto w-16 h-16 flex items-center justify-center rounded-xl bg-gradient-teal text-white mb-4 shadow-md">
                   <lucide-icon [img]="Settings" class="h-8 w-8"></lucide-icon>
                 </div>
                 <h4 class="font-semibold text-base mb-1">Configuración</h4>
                 <p class="text-sm text-gray-500">Preferencias</p>
               </div>
             </div>
+
           </div>
         </div>
       </div>
@@ -323,5 +333,9 @@
     <app-recipe-registration-modal (recipeAdded)="handleRecipeAdded($event)"></app-recipe-registration-modal>
     <app-pending-pqrs-modal (pqrResolved)="handlePqrResolved($event)"
       (modalClosed)="handleModalClosed()"></app-pending-pqrs-modal>
+    <app-recipe-view-edit-modal (recipeSelected)="handleRecipeSelected($event)"
+      (recipeDeleted)="handleRecipeDeleted($event)" (addNewRecipe)="openRecipesModal()">
+    </app-recipe-view-edit-modal>
+    <app-employee-profile-modal [employee]="employee"></app-employee-profile-modal>
   </div>
 </div>

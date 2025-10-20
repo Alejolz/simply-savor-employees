@@ -1,0 +1,271 @@
+<div class="custom-modal" [class.show]="isVisible">
+  <div class="custom-modal-overlay" (click)="close()"></div>
+  <div class="custom-modal-container">
+    <div class="custom-modal-header">
+      <h4 class="custom-modal-title">Gestión de Recetas</h4>
+      <button type="button" class="custom-modal-close" (click)="close()">&times;</button>
+    </div>
+
+    <div class="custom-modal-body">
+      <!-- Mensaje de error -->
+      <div class="alert alert-danger" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
+      <!-- Mensaje de éxito -->
+      <div class="alert alert-success" *ngIf="successMessage">
+        {{ successMessage }}
+      </div>
+
+      <!-- Barra de búsqueda y filtros -->
+      <div class="search-filters mb-3">
+        <div class="input-group">
+          <input type="text" class="form-control" placeholder="Buscar recetas..." [(ngModel)]="searchTerm"
+            (input)="filterRecipes()">
+          <button class="btn btn-outline-secondary" type="button">
+            <i class="bi bi-search"></i>
+          </button>
+        </div>
+
+        <div class="filters mt-2 d-flex flex-wrap gap-2 align-items-center">
+          <!-- 🔹 Filtro de Categoría -->
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+              Categoría
+              <span *ngIf="selectedCategories.length">({{ selectedCategories.length }})</span>
+            </button>
+
+            <ul class="dropdown-menu p-2" style="min-width: 220px;">
+              <li>
+                <a class="dropdown-item" (click)="filterByCategory(null)">Todas</a>
+              </li>
+              <li *ngFor="let category of categories">
+                <a class="dropdown-item" (click)="filterByCategory(category.id)"
+                  [class.active]="selectedCategories.includes(category.id)" style="cursor: pointer;">
+                  {{ category.name }}
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- 🔹 Filtro de Dificultad -->
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+              Dificultad
+            </button>
+
+            <ul class="dropdown-menu p-2" style="min-width: 180px;">
+              <li>
+                <a class="dropdown-item" (click)="filterByDifficulty(null)">Todas</a>
+              </li>
+              <li *ngFor="let difficulty of difficulties">
+                <a class="dropdown-item" (click)="filterByDifficulty(difficulty.id)"
+                  [class.active]="selectedDifficulty === difficulty.id">
+                  {{ difficulty.name }}
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- 🔹 Botón Nueva Receta -->
+          <button class="btn btn-sm btn-outline-primary ms-auto" (click)="openRecipeForm()">
+            <i class="bi bi-plus-lg"></i> Nueva Receta
+          </button>
+        </div>
+
+        <!-- 🔹 Badges de categorías seleccionadas -->
+        <div *ngIf="selectedCategories.length" class="mt-2 d-flex flex-wrap gap-2">
+          <ng-container *ngFor="let category of categories">
+            <span *ngIf="selectedCategories.includes(category.id)"
+              class="badge rounded-pill bg-primary d-flex align-items-center">
+              {{ category.name }}
+              <button type="button" class="btn-close btn-close-white btn-sm ms-2" aria-label="Quitar"
+                style="font-size: 0.6rem;" (click)="removeCategory(category.id)"></button>
+            </span>
+          </ng-container>
+
+          <span class="badge bg-danger rounded-pill" style="cursor: pointer;" (click)="filterByCategory(null)">
+            Limpiar todo
+          </span>
+        </div>
+
+
+        <!-- Lista de recetas -->
+        <div class="recipe-list" *ngIf="!isLoading && filteredRecipes.length > 0 && !selectedRecipe">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th scope="col">Título</th>
+                  <th scope="col">Categoría</th>
+                  <th scope="col">Dificultad</th>
+                  <th scope="col">Duración</th>
+                  <th scope="col">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let recipe of filteredRecipes">
+                  <td>{{ recipe.title }}</td>
+                  <td>{{ getCategoryName(recipe.categoryId) }}</td>
+                  <td>{{ getDifficultyName(recipe.difficultyId) }}</td>
+                  <td>{{ recipe.duration }}</td>
+                  <td>
+                    <div class="btn-group btn-group-sm">
+                      <button type="button" class="btn btn-outline-primary" (click)="viewRecipe(recipe)">
+                        <i class="bi bi-eye"></i>
+                      </button>
+                      <button type="button" class="btn btn-outline-secondary" (click)="editRecipe(recipe)">
+                        <i class="bi bi-pencil"></i>
+                      </button>
+                      <button type="button" class="btn btn-outline-danger" (click)="deleteRecipe(recipe.id)">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Estado de carga -->
+        <div *ngIf="isLoading" class="text-center my-4">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando...</span>
+          </div>
+          <p class="mt-2">Cargando recetas...</p>
+        </div>
+
+        <!-- Sin resultados -->
+        <div *ngIf="!isLoading && filteredRecipes.length === 0 && !selectedRecipe" class="text-center my-4">
+          <div class="alert alert-info">
+            No se encontraron recetas que coincidan con su búsqueda.
+          </div>
+        </div>
+
+        <!-- Vista detallada de una receta (modo vista o edición) -->
+        <div *ngIf="selectedRecipe" class="selected-recipe-view mt-3">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h5 class="mb-0" *ngIf="!isEditMode">{{ selectedRecipe.title }}</h5>
+              <input *ngIf="isEditMode" type="text" class="form-control" [(ngModel)]="editingRecipe.title">
+              <button type="button" class="btn-close" aria-label="Cerrar" (click)="closeRecipeView()"></button>
+            </div>
+
+            <div class="card-body">
+              <!-- Modo vista -->
+              <div *ngIf="!isEditMode">
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <h6><i class="bi bi-tag"></i> Categoría:</h6>
+                    <p>{{ getCategoryName(selectedRecipe.categoryId) }}</p>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <h6><i class="bi bi-bar-chart"></i> Dificultad:</h6>
+                    <p>{{ getDifficultyName(selectedRecipe.difficultyId) }}</p>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <h6><i class="bi bi-clock"></i> Duración:</h6>
+                    <p>{{ selectedRecipe.duration }}</p>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <h6><i class="bi bi-people"></i> Porciones:</h6>
+                    <p>{{ selectedRecipe.portions }}</p>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <h6><i class="bi bi-list-ul"></i> Ingredientes:</h6>
+                  <ul class="list-group">
+                    <li class="list-group-item" *ngFor="let ingredient of selectedRecipe.ingredients.split(',')">
+                      {{ ingredient.trim() }}
+                    </li>
+                  </ul>
+                </div>
+
+                <div>
+                  <h6><i class="bi bi-check2-square"></i> Paso a paso:</h6>
+                  <div class="card-text">
+                    <pre class="recipe-steps">{{ formatSteps(selectedRecipe.stepByStep) }}</pre>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Modo edición -->
+              <div *ngIf="isEditMode">
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label"><i class="bi bi-tag"></i> Categoría:</label>
+                    <select class="form-select" [(ngModel)]="editingRecipe.categoryId">
+                      <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label"><i class="bi bi-bar-chart"></i> Dificultad:</label>
+                    <select class="form-select" [(ngModel)]="editingRecipe.difficultyId">
+                      <option *ngFor="let difficulty of difficulties" [value]="difficulty.id">{{ difficulty.name }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label"><i class="bi bi-clock"></i> Duración:</label>
+                    <input type="text" class="form-control" [(ngModel)]="editingRecipe.duration">
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label"><i class="bi bi-people"></i> Porciones:</label>
+                    <input type="number" class="form-control" [(ngModel)]="editingRecipe.portions">
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label"><i class="bi bi-list-ul"></i> Ingredientes:</label>
+                  <textarea class="form-control" rows="4" [(ngModel)]="editingRecipe.ingredients"></textarea>
+                  <small class="text-muted">Separa los ingredientes con comas</small>
+                </div>
+
+                <div>
+                  <label class="form-label"><i class="bi bi-check2-square"></i> Paso a paso:</label>
+                  <textarea class="form-control" rows="6" [(ngModel)]="editingRecipe.stepByStep"></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-footer">
+              <!-- Botones en modo vista -->
+              <div *ngIf="!isEditMode">
+                <button class="btn btn-primary me-2" (click)="activateEditMode()">
+                  <i class="bi bi-pencil"></i> Editar
+                </button>
+                <button class="btn btn-danger" (click)="deleteRecipe(selectedRecipe.id)">
+                  <i class="bi bi-trash"></i> Eliminar
+                </button>
+                <button class="btn btn-secondary ms-2" (click)="closeRecipeView()">
+                  <i class="bi bi-arrow-left"></i> Volver a la lista
+                </button>
+              </div>
+
+              <!-- Botones en modo edición -->
+              <div *ngIf="isEditMode">
+                <button class="btn btn-success me-2" (click)="saveRecipeChanges()">
+                  <i class="bi bi-check-lg"></i> Guardar cambios
+                </button>
+                <button class="btn btn-outline-secondary" (click)="cancelEdit()">
+                  <i class="bi bi-x-lg"></i> Cancelar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="custom-modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="close()">Cerrar</button>
+      </div>
+    </div>
+  </div>

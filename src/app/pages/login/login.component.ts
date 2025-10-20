@@ -14,12 +14,13 @@ export class LoginComponent {
 
   errorMessage: string = '';
   isLoading: boolean = false;
+  showForgotMessage = false;
 
-  constructor(private userService: UserService, private router: Router) {}
+  constructor(private userService: UserService, private router: Router) { }
 
   onSubmit(event: Event) {
     event.preventDefault(); // Evita refresh del navegador
-    
+
     const form = event.target as HTMLFormElement;
 
     // ✅ Validación nativa del navegador
@@ -36,7 +37,14 @@ export class LoginComponent {
     this.errorMessage = '';
 
     this.userService.login(email, password).subscribe({
-      next: (res) => {
+      next: (res: any) => {
+        console.log('Respuesta del servidor:', res);
+        if (res.body.code && res.body.code === 'BE04') {
+          console.log('⚠️ Login fallido:', res.message);
+          this.errorMessage = res.message || 'Correo o contraseña incorrectos';
+          this.isLoading = false;
+          return; // Salir antes de navegar
+        }
         if (res.status === 200) {
           console.log('✅ Login exitoso');
           this.router.navigate(['/dashboard']);
@@ -49,5 +57,10 @@ export class LoginComponent {
         this.isLoading = false;
       }
     });
+  }
+
+  toggleForgotMessage(event: Event): void {
+    event.preventDefault();
+    this.showForgotMessage = !this.showForgotMessage;
   }
 }

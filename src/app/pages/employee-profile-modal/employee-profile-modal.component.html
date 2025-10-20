@@ -1,0 +1,147 @@
+<div
+  *ngIf="isOpen"
+  class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm"
+>
+  <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-md mx-4 p-6 animate-fade-in">
+    <!-- Header -->
+    <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-3">
+      <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100">
+        Perfil del Empleado
+      </h2>
+      <button (click)="close()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+        <lucide-icon [img]="X" class="w-5 h-5"></lucide-icon>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="mt-5 text-center">
+      <div class="flex flex-col items-center mb-5">
+        <div class="bg-blue-100 dark:bg-blue-800 p-3 rounded-full">
+          <lucide-icon [img]="User" class="w-10 h-10 text-blue-600 dark:text-blue-300"></lucide-icon>
+        </div>
+        <h3 class="text-lg font-medium text-gray-800 dark:text-gray-100 mt-2">
+          {{ employee?.userName }}
+        </h3>
+        <p class="text-gray-500 dark:text-gray-400 text-sm">
+          {{ employee?.employeeRole }}
+        </p>
+      </div>
+
+      <!-- Modo edición -->
+      <form *ngIf="isEditing; else viewMode" class="space-y-4 text-left">
+        <!-- Nombre -->
+        <div>
+          <label class="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">Nombre</label>
+          <input
+            [(ngModel)]="editableEmployee.userName"
+            name="userName"
+            class="w-full border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 
+                   bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-gray-100 
+                   focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
+        <!-- Correo -->
+        <div>
+          <label class="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">Correo</label>
+          <input
+            [(ngModel)]="editableEmployee.employeeEmail"
+            name="employeeEmail"
+            type="email"
+            class="w-full border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 
+                   bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-gray-100 
+                   focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
+        <!-- Tipo de Identificación -->
+        <div>
+          <label class="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">Tipo de Identificación</label>
+          <input
+            [(ngModel)]="editableEmployee.identificationType"
+            name="identificationType"
+            class="w-full border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 
+                   bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-gray-100 
+                   focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
+        <!-- Número de Identificación -->
+        <div>
+          <label class="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">Número de Identificación</label>
+          <input
+            [(ngModel)]="editableEmployee.employeeIdentification"
+            name="employeeIdentification"
+            class="w-full border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 
+                   bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-gray-100 
+                   focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
+        <!-- Teléfono -->
+        <div>
+          <label class="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">Teléfono</label>
+          <input
+            [(ngModel)]="editableEmployee.employeePhone"
+            name="employeePhone"
+            class="w-full border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 
+                   bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-gray-100 
+                   focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
+        <!-- Rol (bloqueado) -->
+        <div>
+          <label class="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">Rol</label>
+          <input
+            [(ngModel)]="editableEmployee.employeeRole"
+            name="employeeRole"
+            [readonly]="true"
+            class="w-full border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 
+                   bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+          />
+        </div>
+
+        <!-- Botones -->
+        <div class="flex justify-end gap-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+          <button
+            type="button"
+            (click)="toggleEdit()"
+            class="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 
+                   hover:bg-gray-300 dark:hover:bg-gray-600"
+          >
+            Cancelar
+          </button>
+          <button
+            type="button"
+            (click)="saveChanges()"
+            class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 flex items-center gap-2"
+          >
+            <lucide-icon [img]="Save" class="w-4 h-4"></lucide-icon> Guardar
+          </button>
+        </div>
+      </form>
+
+      <!-- Modo vista -->
+      <ng-template #viewMode>
+        <div class="text-left space-y-2">
+          <p><span class="font-medium text-gray-600 dark:text-gray-300">Nombre:</span> {{ employee?.userName }}</p>
+          <p><span class="font-medium text-gray-600 dark:text-gray-300">Correo:</span> {{ employee?.employeeEmail }}</p>
+          <p><span class="font-medium text-gray-600 dark:text-gray-300">Tipo de Identificación:</span> {{ employee?.identificationType }}</p>
+          <p><span class="font-medium text-gray-600 dark:text-gray-300">Número de Identificación:</span> {{ employee?.employeeIdentification }}</p>
+          <p><span class="font-medium text-gray-600 dark:text-gray-300">Teléfono:</span> {{ employee?.employeePhone }}</p>
+          <p><span class="font-medium text-gray-600 dark:text-gray-300">Rol:</span> {{ employee?.employeeRole }}</p>
+        </div>
+
+        <div class="mt-5 flex justify-center">
+          <button
+            (click)="toggleEdit()"
+            class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 flex items-center gap-2"
+          >
+            <lucide-icon [img]="Pencil" class="w-4 h-4"></lucide-icon> Editar
+          </button>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>
